@@ -1,102 +1,103 @@
 <template>
     <div>
         <a-modal
-                title="添加任务"
+                :title="raskInfo.id?'修改任务':'添加任务'"
                 :visible="showModal"
+                v-if="showModal"
                 :confirm-loading="confirmLoading"
                 @ok="handleOk"
                 @cancel="handleCancel"
         >
             <div>
-                <a-form ref="test" :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" @submit="handleSubmit">
+                <a-form ref="test" :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+                    <a-form-item label="任务名称">
+                        <a-input
+                                placeholder="请输入系统名称"
+                                v-decorator="['taskName', { rules: [{ required: true, message: '请输入任务名称！' }],
+                                    initialValue:raskInfo.taskName
+                                }]"
+                        />
+                    </a-form-item>
                     <a-form-item label="系统名称">
                         <a-input
                                 placeholder="请输入系统名称"
-                                v-decorator="['note', { rules: [{ required: true, message: '请输入系统名称！' }] }]"
+                                v-decorator="['projectName', { rules: [{ required: true, message: '请输入系统名称！' }],
+                                 initialValue:raskInfo.projectName
+                                 }]"
                         />
                     </a-form-item>
                     <a-form-item label="版本号">
                         <a-select
                                 v-decorator="[
-                                      'gender',
-                                      { rules: [{ required: true, message: '请选择版本号!' }] },
+                                      'version',
+                                      { rules: [{ required: true, message: '请选择版本号!' }],
+                                       initialValue:raskInfo.version?parseInt(raskInfo.version):null
+                                       },
                                     ]"
                                 placeholder="请选择版本"
-                                @change="handleSelectChange"
                         >
-                            <a-select-option value="male">
-                                1.0.0.0
+                            <a-select-option :value="item.name" :key="item.id" v-for="item in versionData">
+                                {{item.name}}
                             </a-select-option>
-                            <a-select-option value="female">
-                                1.0.0.1
-                            </a-select-option>
+
                         </a-select>
                     </a-form-item>
-                    <a-form-item
-                            v-for="(k, index) in form.getFieldValue('keys')"
-                            :key="k"
-                            v-bind="index === 0 ? formItemLayout : formItemLayoutWithOutLabel"
-                            :label="index === 0 ? 'Passengers' : ''"
-                            :required="false"
-                    >
-                        <a-input
-                                v-decorator="[
-                                      `names[${k}]`,
-                                      {
-                                        validateTrigger: ['change', 'blur'],
-                                        rules: [
-                                          {
-                                            required: true,
-                                            whitespace: true,
-                                            message: 'Please input passenger\'s name or delete this field.',
-                                          },
-                                        ],
-                                      },
-                                    ]"
-                                placeholder="passenger name"
-                                style="width: 60%; margin-right: 8px"
-                        />
-                        <a-icon
-                                v-if="form.getFieldValue('keys').length > 1"
-                                class="dynamic-delete-button"
-                                type="minus-circle-o"
-                                :disabled="form.getFieldValue('keys').length === 1"
-                                @click="() => remove(k)"
-                        />
-                    </a-form-item>
-                    <a-form-item v-bind="formItemLayoutWithOutLabel">
-                        <a-button type="dashed" style="width: 60%" @click="add">
-                            <a-icon type="plus" /> Add field
-                        </a-button>
-                    </a-form-item>
-                    <a-form-item label="参数名">
-                        <a-select
-                                style="width: 120px;margin-right: 10px;"
-                                v-decorator="[
-                                      'key',
-                                      { rules: [{ required: true, message: '请选择参数名!' }] },
-                                    ]"
-                                placeholder="请选择参数"
-                                @change="handleSelectChange"
+                    <div :key="index" v-for="(domain, index) in dynamicValidateForm.domains" style="position: relative">
+                        <a-form-item
+                                v-bind="index===0 ?formItemLayout:{
+                                labelCol: {
+                                    xs: { span: 5 },
+                                    sm: { span: 5 },
+                                },
+                                wrapperCol: {
+                                    xs: { span: 12,
+                                        push:5},
+                                    sm: { span: 12,push:5 },
+                                },
+                            }"
+                                :label="index === 0 ? '参数名' : ''"
+                                :prop="'domains.' + index + '.value'"
+                                :rules="{
+                            required: true,
+                            message: 'domain can not be null',
+                            trigger: 'blur',
+                            }"
                         >
-                            <a-select-option value="male">
-                                1.0.0.0
-                            </a-select-option>
-                            <a-select-option value="female">
-                                1.0.0.1
-                            </a-select-option>
-                        </a-select>
-                        <a-input
-                                style="width: 104px"
-                                placeholder="参数值"
-                                v-decorator="['value', { rules: [{ required: true, message: '请输入参数值!' }] }]"
-                        />
-                    </a-form-item>
-                    <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-                        <a-button type="primary" html-type="submit">
-                            Submit
+                            <a-select placeholder="请选择参数名"
+                                      v-decorator="[`key[${index}]`, { rules: [{ required: true, message: '请选择参数名！' }],
+                                       initialValue:raskInfo.arr1[index]
+                                       }]"
+                                      style="width: 100px;margin-right: 10px;">
+                                <a-select-option :value="item.name" :key="item.id" v-for="item in paramData">
+                                    {{item.name}}
+                                </a-select-option>
+                            </a-select>
+                        </a-form-item>
+                        <a-form-item
+                                style="position: absolute;top: 0px;left:210px;width: 250px;"
+
+                        >
+
+                            <a-input style="width: 100px;margin-right: 10px;"
+                                     placeholder="请输入参数值"
+                                     v-decorator="[`value[${index}]`, { rules: [{ required: true, message: '请输入参数值！' }],
+                                      initialValue:raskInfo.arr2[index]
+                                      }]"
+                                     />
+                            <a-icon
+                                    v-if="dynamicValidateForm.domains.length > 1"
+                                    class="dynamic-delete-button"
+                                    type="minus-circle-o"
+                                    :disabled="dynamicValidateForm.domains.length === 1"
+                                    @click="removeDomain(domain)"
+                            />
+                        </a-form-item>
+                    </div>
+                    <a-form-model-item v-bind="formItemLayoutWithOutLabel">
+                        <a-button type="dashed" style="width: 60%" @click="addDomain">
+                            <a-icon type="plus" /> 增加参数
                         </a-button>
-                    </a-form-item>
+                    </a-form-model-item>
                 </a-form>
             </div>
         </a-modal>
@@ -104,41 +105,65 @@
 </template>
 
 <script>
+    // import {POST_PARAM_SAVE} from "../api/url";
+
+    import { POST_TASK_ADD, POST_TASK_CHECK, POST_TASK_UPDATE} from "../api/url";
+
     export default {
         name: "addList",
         props:{
-            showModal:Boolean
+            showModal:Boolean,
+            paramData:Array,
+            versionData:Array,
+            raskInfo:Object
         },
         data() {
             return {
                 ModalText: 'Content of the modal',
+                checkNum : 0,
                 visible: false,
                 confirmLoading: false,
                 formLayout: 'horizontal',
                 form: this.$form.createForm(this, { name: 'coordinated' }),
                 formItemLayout: {
                     labelCol: {
-                        xs: { span: 24 },
-                        sm: { span: 4 },
+                        xs: { span: 5 },
+                        sm: { span: 5 },
                     },
                     wrapperCol: {
-                        xs: { span: 24 },
-                        sm: { span: 20 },
+                        xs: { span: 12 },
+                        sm: { span: 12 },
                     },
                 },
                 formItemLayoutWithOutLabel: {
-                    wrapperCol: {
-                        xs: { span: 24, offset: 0 },
-                        sm: { span: 20, offset: 4 },
+                    labelCol: {
+                        xs: { span: 5 },
+                        sm: { span: 5 },
                     },
+                    wrapperCol: {
+                        xs: { span: 12,
+                            push:5},
+                        sm: { span: 12,push:5 },
+                    },
+                },
+                dynamicValidateForm: {
+                    domains: [
+                        {   value: '',
+                            key: '',
+                        }
+                    ],
                 },
             };
         },
-        beforeCreate() {
-            this.form = this.$form.createForm(this, { name: 'coordinated' });
-            this.form.getFieldDecorator('keys', { initialValue: [], preserve: true });
+        watch:{
+            showModal:function(val, oldVal){
+                console.log(val, oldVal)
+                this.dynamicValidateForm.domains = this.raskInfo.arr3
+            }
         },
+
         methods: {
+
             remove(k) {
                 const { form } = this;
                 // can use data-binding to get
@@ -152,48 +177,76 @@
                 form.setFieldsValue({
                     keys: keys.filter(key => key !== k),
                 });
+                console.log(this.dynamicValidateForm.domains)
             },
-
-            add() {
-                const { form } = this;
-                // can use data-binding to get
-                const keys = form.getFieldValue('keys');
-                const nextKeys = keys.concat(id++);
-                // can use data-binding to set
-                // important! notify form to detect changes
-                form.setFieldsValue({
-                    keys: nextKeys,
-                });
-            },
-
-            handleSubmit(e) {
-                e.preventDefault();
+            handleOk() {
+                this.ModalText = 'The modal will be closed after two seconds';
+                this.confirmLoading = true;
                 this.form.validateFields((err, values) => {
+                    this.confirmLoading = false
                     if (!err) {
-                        console.log('Received values of form: ', values);
+                        this.$axios.get(POST_TASK_CHECK,{
+                            params: {
+                                projectName:values.projectName,
+                                version:values.version,
+                                taskName:values.taskName,
+                            }
+                        }).then((res)=>{
+                            if(res.data.resultCode===200){
+                                console.log('Received values of form: ', values);
+                                let obj = {}
+                                values.key.forEach((item,index)=>{
+                                    obj[item] = values.value[index]
+                                })
+                                // 判断是否是修改
+                                this.$axios({
+                                    headers: {
+                                        'Content-Type': 'application/json; charset=UTF-8'
+                                    },
+                                    method: 'post',
+                                    url: this.raskInfo.id ? POST_TASK_UPDATE:POST_TASK_ADD,
+                                    data:{
+                                        projectName:values.projectName,
+                                        version:values.version,
+                                        taskName:values.taskName,
+                                        params:JSON.stringify(obj),
+                                        id: this.raskInfo.id
+                                    }
+
+                                }).then((res)=>{
+                                    console.log(res)
+                                    this.confirmLoading = false
+                                    this.$emit('closeRask')
+                                })
+                            }else{
+                                this.$message.info('该任务已创建 无需重复提交');
+                                this.confirmLoading = false
+                                this.$emit('closeRask')
+                            }
+                        })
+
+
+
+
+
                     }
                 });
             },
-            handleSelectChange(value) {
-                console.log(value);
-                this.form.setFieldsValue({
-                    note: `Hi, ${value === 'male' ? 'man' : 'lady'}!`,
-                });
-            },
-            showModal() {
-                this.visible = true;
-            },
-            handleOk(e) {
-                this.ModalText = 'The modal will be closed after two seconds';
-                this.confirmLoading = true;
-                setTimeout(() => {
-                    this.showModal = false;
-                    this.confirmLoading = false;
-                }, 2000);
-            },
-            handleCancel(e) {
+            handleCancel() {
                 console.log('Clicked cancel button');
-                this.showModal = false;
+                this.$emit('closeRask')
+            },
+            removeDomain(item) {
+                let index = this.dynamicValidateForm.domains.indexOf(item);
+                if (index !== -1) {
+                    this.dynamicValidateForm.domains.splice(index, 1);
+                }
+            },
+            addDomain() {
+                this.dynamicValidateForm.domains.push({
+                    value: '',
+                    key: '',
+                });
             },
         }
     }
