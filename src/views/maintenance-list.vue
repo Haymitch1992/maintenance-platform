@@ -236,7 +236,6 @@
                 obj.arr2 = arr2
                 obj.arr3 = arr3
                 this.raskInfo = obj
-                console.log('传递的数据',obj)
                 this.raskModel = true
             },
             createRask(){
@@ -321,29 +320,18 @@
                     })
             },
             raskList(){
-                if(this.currentVersion!=='-'){
-                    this.$axios.get(POST_TASK_LIST,{
+                this.$axios.get(POST_TASK_LIST, this.currentVersion!=='-'?{
                         params:{
                             version:this.currentVersion
                         }
+                    }:'')
+                    .then((res)=>{
+                        console.log(res)
+                        this.dataList = res.data.data
                     })
-                        .then((res)=>{
-                            console.log(res)
-                            this.dataList = res.data.data
-                        })
-                        .catch((result)=>{
-                            console.log(result)
-                        })
-                }else{
-                    this.$axios.get(POST_TASK_LIST)
-                        .then((res)=>{
-                            console.log(res)
-                            this.dataList = res.data.data
-                        })
-                        .catch((result)=>{
-                            console.log(result)
-                        })
-                }
+                    .catch((result)=>{
+                        console.log(result)
+                    })
 
             },
         }

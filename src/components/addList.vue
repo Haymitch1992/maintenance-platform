@@ -31,7 +31,7 @@
                                 v-decorator="[
                                       'version',
                                       { rules: [{ required: true, message: '请选择版本号!' }],
-                                       initialValue:raskInfo.version?parseInt(raskInfo.version):null
+                                       initialValue:raskInfo.version?raskInfo.version:null
                                        },
                                     ]"
                                 placeholder="请选择版本"
@@ -121,7 +121,6 @@
             return {
                 ModalText: 'Content of the modal',
                 checkNum : 0,
-                visible: false,
                 confirmLoading: false,
                 formLayout: 'horizontal',
                 form: this.$form.createForm(this, { name: 'coordinated' }),
@@ -161,9 +160,7 @@
                 this.dynamicValidateForm.domains = this.raskInfo.arr3
             }
         },
-
         methods: {
-
             remove(k) {
                 const { form } = this;
                 // can use data-binding to get
@@ -172,7 +169,6 @@
                 if (keys.length === 1) {
                     return;
                 }
-
                 // can use data-binding to set
                 form.setFieldsValue({
                     keys: keys.filter(key => key !== k),
@@ -193,7 +189,6 @@
                             }
                         }).then((res)=>{
                             if(res.data.resultCode===200){
-                                console.log('Received values of form: ', values);
                                 let obj = {}
                                 values.key.forEach((item,index)=>{
                                     obj[item] = values.value[index]
@@ -224,11 +219,6 @@
                                 this.$emit('closeRask')
                             }
                         })
-
-
-
-
-
                     }
                 });
             },
