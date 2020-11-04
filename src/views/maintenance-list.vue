@@ -32,54 +32,69 @@
                                 <p>南宁地铁4号线</p>
                             </li>
                             <li>
-                                <p>当前版本号</p>
-                                <p>{{currentVersion}}</p>
+                                <p>技术支持</p>
+                                <p>交控科技</p>
                             </li>
                             <li>
-                                <p>选择版本号</p>
+                                <p>当前任务总数</p>
                                 <p>
-                                    <a-select v-model="currentVersion" style="width: 120px" @change="handleChange">
-                                        <a-select-option value="-">
-                                            -
-                                        </a-select-option>
-                                        <a-select-option v-for="item in versionData" :key="item.id" :value="item.name">
-                                            {{item.name}}
-                                        </a-select-option>
-                                    </a-select>
+                                    {{dataList.length}}
                                 </p>
                             </li>
                         </ul>
                     </div>
                     <div class="maintenance-box">
-                        <div class="btn-line">
-                            <a-button type="primary" @click="createRask()">
-                                添加任务
-                            </a-button>
-                            <a-button @click="createOptions()">
-                                创建参数
-                            </a-button>
-                            <a-button @click="createVersion()">
-                                创建版本
-                            </a-button>
-                        </div>
-
                         <div v-show="current===0">
+                            <div class="btn-line">
+                                <a-button type="primary" @click="createRask()">
+                                    添加任务
+                                </a-button>
+                                <a-select v-model="currentVersion" style="width: 120px" @change="handleChange">
+                                    <a-select-option value="-">
+                                        全部
+                                    </a-select-option>
+                                    <a-select-option v-for="item in versionData" :key="item.id" :value="item.name">
+                                        {{item.name}}
+                                    </a-select-option>
+                                </a-select>
+                            </div>
+
                             <a-table :columns="columns" :data-source="dataList" bordered>
-                                <template slot="options" slot-scope="text, record">
-                                    <a @click="createView(record.params)">查看</a>
-                                </template>
                                 <template slot="operation" slot-scope="text, record">
+                                    <a @click="createView(record.params)"  class="btn-margin-right">查看参数</a>
+                                    <a @click="createViewLog(record)" class="btn-margin-right" >查看日志</a>
                                     <a :disabled="record.isExecute===1" @click="editRask(record)" class="btn-margin-right">修改</a>
                                     <a :disabled="record.isExecute===1" @click="raskRun(record.id)">执行</a>
                                 </template>
                             </a-table>
                         </div>
                         <div v-show="current===1">
+                            <div class="btn-line">
+                                <a-button type="primary" @click="createOptions()">
+                                    创建参数
+                                </a-button>
+                                <a-select v-model="currentOptionType" style="width: 120px" @change="paramList">
+                                    <a-select-option value="-">
+                                        全部
+                                    </a-select-option>
+                                    <a-select-option value="中间件">
+                                        中间件
+                                    </a-select-option>
+                                    <a-select-option value="自研服务">
+                                        自研服务
+                                    </a-select-option>
+                                </a-select>
+                            </div>
                             <a-table :columns="paramCloumns" :data-source="paramData" bordered>
                             </a-table>
                         </div>
                         <div v-show="current===2">
-                            <a-table :columns="paramCloumns" :data-source="versionData" bordered>
+                            <div class="btn-line">
+                                <a-button type="primary" @click="createVersion()">
+                                    创建版本
+                                </a-button>
+                            </div>
+                            <a-table :columns="versionCloumns" :data-source="versionData" bordered>
 
                             </a-table>
                         </div>
@@ -100,6 +115,8 @@
                  :versionData="versionData"  @closeRask="closeRask"></addList>
         <addOptions :showModal="optionsModel" @closeOptions="closeOptions"></addOptions>
         <addVersion  :showModal="versionModel" @closeVersion="closeVersion"></addVersion>
+        <viewLog :showModal="viewLog"
+        @closeView="closeViewLog" :paramsObj="logDate"></viewLog>
     </div>
 </template>
 
@@ -108,6 +125,7 @@
     import addOptions from "../components/addOptions";
     import addVersion from "../components/addVersion";
     import viewOptions from "../components/viewOptions";
+    import viewLog from "../components/viewLog";
 
     import {POST_PARAM_LIST, POST_TASK_LIST, POST_TASK_RUN, POST_VERSIONS_LIST} from "../api/url";
     export default {
@@ -115,7 +133,8 @@
             addList,
             addOptions,
             addVersion,
-            viewOptions
+            viewOptions,
+            viewLog
         },
         name: "maintenance-list",
         data(){
@@ -124,8 +143,10 @@
                 viewModel:false,
                 optionsModel: false,
                 versionModel: false,
+                viewLog:false,
                 current: 0,
                 viewObj:[],
+                logDate:'',
                 paramCloumns:[
                     {
                         title: '任务号Id',
@@ -134,6 +155,10 @@
                     {
                         title: '参数名',
                         dataIndex: 'name',
+                    },
+                    {
+                        title: '参数模板',
+                        dataIndex: 'type',
                     },
                 ],
                 versionCloumns:[
@@ -167,17 +192,19 @@
                     {
                         title: '执行结果',
                         dataIndex: 'result',
+                        width: 250
                     },
                     {
                         title: '执行时间',
                         dataIndex: 'datetime',
                     },
-                    {
-                        title: '参数',
-                        className: 'column-money',
-                        dataIndex: 'money',
-                        scopedSlots: {customRender: 'options'}
-                    },
+
+                    // {
+                    //     title: '参数',
+                    //     className: 'column-money',
+                    //     dataIndex: 'money',
+                    //     scopedSlots: {customRender: 'options'}
+                    // },
                     {
                         title: '操作',
                         dataIndex: 'address',
@@ -188,6 +215,7 @@
                 paramData:[],
                 versionData:[],
                 currentVersion:'-',
+                currentOptionType:'-',
                 raskInfo:{
 
                 }
@@ -204,6 +232,13 @@
             },
             closeView(){
                 this.viewModel = false
+            },
+            closeViewLog(){
+                this.viewLog = false
+            },
+            createViewLog(obj){
+                this.viewLog = true
+                this.logDate = obj.log
             },
             createView(e){
                 this.viewModel = true
@@ -264,6 +299,7 @@
             closeOptions(){
                 // 关闭参数
                 this.paramList()
+
                 this.optionsModel = false
             },
             createVersion(){
@@ -310,7 +346,11 @@
                     })
             },
             paramList(){
-                this.$axios.get(POST_PARAM_LIST)
+                this.$axios.get(POST_PARAM_LIST, this.currentOptionType!=='-'?{
+                    params:{
+                            type:this.currentOptionType
+                        }
+                    }:'')
                     .then((res)=>{
                         this.paramData = res.data.data
                         console.log('数据结构',this.paramData)
@@ -376,9 +416,16 @@
         padding: 0;
         margin: 0;
     }
+    .project-info p{
+        margin-bottom: 8px;
+    }
     .project-info li{
+        padding-top: 12px;
         flex: 1;
         text-align: center;
+    }
+    .project-info li p:last-child{
+        font-size: 18px;
     }
     .btn-margin-right{
         margin-right: 20px;

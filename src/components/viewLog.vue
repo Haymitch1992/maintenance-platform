@@ -1,24 +1,21 @@
 <template>
     <a-modal
-            title="查看参数"
+            title="查看日志"
             :visible="showModal"
             v-if="showModal"
             @ok="handleOk"
             @cancel="handleCancel"
     >
-        <a-table :columns="cloumns" :data-source="paramsObj" bordered>
-
-        </a-table>
+    <div>{{paramsObj}}</div>
     </a-modal>
 </template>
 
 <script>
-
     export default {
-        name: "viewOptions",
+        name: "viewLog",
         props:{
             showModal:Boolean,
-            paramsObj:Array
+            paramsObj:String
         },
         data(){
             return{
@@ -27,15 +24,15 @@
                         title: '序号',
                         dataIndex: 'index',
                     },
-                   {
-                       title: '参数名',
-                       dataIndex: 'key',
-                   },
-                   {
-                       title: '参数值',
-                       dataIndex: 'value',
-                   },
-               ],
+                    {
+                        title: '参数名',
+                        dataIndex: 'key',
+                    },
+                    {
+                        title: '参数值',
+                        dataIndex: 'value',
+                    },
+                ],
             }
         },
         methods:{

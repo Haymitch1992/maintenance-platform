@@ -42,6 +42,25 @@
 
                         </a-select>
                     </a-form-item>
+                    <a-form-item label="参数模板">
+                        <a-select
+                                v-decorator="[
+                                      'paramType',
+                                      { rules: [{ required: true, message: '请选择参数模板!' },],
+                                      initialValue:raskInfo.paramType
+                                       },
+                                    ]"
+                                placeholder="请选择版本"
+                                @change="changeParamType"
+                        >
+                            <a-select-option value="中间件" >
+                                中间件
+                            </a-select-option>
+                            <a-select-option value="自研服务" >
+                                自研服务
+                            </a-select-option>
+                        </a-select>
+                    </a-form-item>
                     <div :key="index" v-for="(domain, index) in dynamicValidateForm.domains" style="position: relative">
                         <a-form-item
                                 v-bind="index===0 ?formItemLayout:{
@@ -107,13 +126,13 @@
 <script>
     // import {POST_PARAM_SAVE} from "../api/url";
 
-    import { POST_TASK_ADD, POST_TASK_CHECK, POST_TASK_UPDATE} from "../api/url";
+    import {POST_PARAM_LIST, POST_TASK_ADD, POST_TASK_CHECK, POST_TASK_UPDATE} from "../api/url";
 
     export default {
         name: "addList",
         props:{
             showModal:Boolean,
-            paramData:Array,
+            // paramData:Array,
             versionData:Array,
             raskInfo:Object
         },
@@ -124,6 +143,7 @@
                 confirmLoading: false,
                 formLayout: 'horizontal',
                 form: this.$form.createForm(this, { name: 'coordinated' }),
+                paramData: [],
                 formItemLayout: {
                     labelCol: {
                         xs: { span: 5 },
@@ -161,6 +181,23 @@
             }
         },
         methods: {
+            changeParamType(value){
+                this.paramData = []
+                this.raskInfo.arr1 = []
+                this.raskInfo.arr2 = []
+                this.$axios.get(POST_PARAM_LIST, {
+                    params:{
+                        type:value
+                    }
+                })
+                    .then((res)=>{
+                        console.log(res)
+                        this.paramData = res.data.data
+                    })
+                    .catch((result)=>{
+                        console.log(result)
+                    })
+            },
             remove(k) {
                 const { form } = this;
                 // can use data-binding to get
@@ -205,6 +242,7 @@
                                         version:values.version,
                                         taskName:values.taskName,
                                         params:JSON.stringify(obj),
+                                        paramType:values.paramType,
                                         id: this.raskInfo.id
                                     }
 
