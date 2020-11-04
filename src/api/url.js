@@ -22,3 +22,7 @@ export const POST_VERSIONS_LIST = '/api/version/list'
 export const POST_VERSIONS_CHECK = '/api/version/isRepeat'
 // 添加版本
 export const POST_VERSIONS_SAVE = '/api/version/save'
+
+// 接口路径
+export const GET_LINK_URL = '/api/url/list'
+

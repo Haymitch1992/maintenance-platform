@@ -22,6 +22,10 @@
                             <a-icon type="calendar" />
                             版本号
                         </a-menu-item>
+                        <a-menu-item  @click="openUrl(item)" v-for="item in urlList" :key="1+item.id">
+                            <a-icon type="flag" />
+                            {{item.name}}
+                        </a-menu-item>
                     </a-menu>
                 </a-layout-sider>
                 <a-layout-content>
@@ -80,6 +84,9 @@
                                     <a-select-option value="中间件">
                                         中间件
                                     </a-select-option>
+                                    <a-select-option value="前端">
+                                        前端
+                                    </a-select-option>
                                     <a-select-option value="自研服务">
                                         自研服务
                                     </a-select-option>
@@ -97,6 +104,12 @@
                             <a-table :columns="versionCloumns" :data-source="versionData" bordered>
 
                             </a-table>
+                        </div>
+                        <div v-show="current===3">
+                            <a-alert :message="urlDate.token" type="success" />
+                            <a-button type="primary" @click="openUrlPage" style="margin-top: 20px;">
+                                打开链接
+                            </a-button>
                         </div>
                     </div>
                     <div class="bottom-text">
@@ -127,7 +140,7 @@
     import viewOptions from "../components/viewOptions";
     import viewLog from "../components/viewLog";
 
-    import {POST_PARAM_LIST, POST_TASK_LIST, POST_TASK_RUN, POST_VERSIONS_LIST} from "../api/url";
+    import {GET_LINK_URL, POST_PARAM_LIST, POST_TASK_LIST, POST_TASK_RUN, POST_VERSIONS_LIST} from "../api/url";
     export default {
         components:{
             addList,
@@ -217,6 +230,8 @@
                 versionData:[],
                 currentVersion:'-',
                 currentOptionType:'-',
+                urlList:[],
+                urlDate:{},
                 raskInfo:{
 
                 }
@@ -226,8 +241,25 @@
             this.raskList()
             this.paramList()
             this.versionList()
+            this.getUrl()
         },
         methods:{
+            openUrlPage(){
+                window.open(this.urlDate.url)
+            },
+            getUrl(){
+                this.$axios.get(GET_LINK_URL)
+                    .then((res)=>{
+                        this.urlList = res.data.data
+                    })
+                    .catch((result)=>{
+                        console.log(result)
+                    })
+            },
+            openUrl(obj){
+                this.current =3
+                this.urlDate = obj
+            },
             handleChange(){
                 this.raskList()
             },

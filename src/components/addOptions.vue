@@ -13,6 +13,9 @@
                     <a-select-option value="中间件">
                         中间件
                     </a-select-option>
+                    <a-select-option value="前端">
+                        前端
+                    </a-select-option>
                     <a-select-option value="自研服务">
                         自研服务
                     </a-select-option>

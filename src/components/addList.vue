@@ -56,6 +56,9 @@
                             <a-select-option value="中间件" >
                                 中间件
                             </a-select-option>
+                            <a-select-option value="前端">
+                                前端
+                            </a-select-option>
                             <a-select-option value="自研服务" >
                                 自研服务
                             </a-select-option>
@@ -83,6 +86,7 @@
                             }"
                         >
                             <a-select placeholder="请选择参数名"
+                                      disabled=""
                                       v-decorator="[`key[${index}]`, { rules: [{ required: true, message: '请选择参数名！' }],
                                        initialValue:raskInfo.arr1[index]
                                        }]"
@@ -104,7 +108,7 @@
                                       }]"
                                      />
                             <a-icon
-                                    v-if="dynamicValidateForm.domains.length > 1"
+                                    v-if="dynamicValidateForm.domains.length > 1&&false"
                                     class="dynamic-delete-button"
                                     type="minus-circle-o"
                                     :disabled="dynamicValidateForm.domains.length === 1"
@@ -113,7 +117,7 @@
                         </a-form-item>
                     </div>
                     <a-form-model-item v-bind="formItemLayoutWithOutLabel">
-                        <a-button type="dashed" style="width: 60%" @click="addDomain">
+                        <a-button type="dashed" style="width: 60%" @click="addDomain" v-if="false">
                             <a-icon type="plus" /> 增加参数
                         </a-button>
                     </a-form-model-item>
@@ -193,6 +197,14 @@
                     .then((res)=>{
                         console.log(res)
                         this.paramData = res.data.data
+                        let paramDataLength = res.data.data.length
+                        this.dynamicValidateForm.domains = [
+
+                        ]
+                        for(let i = 0;i<paramDataLength;i++){
+                            this.addDomain()
+                            this.raskInfo.arr1.push(this.paramData[i].name)
+                        }
                     })
                     .catch((result)=>{
                         console.log(result)
