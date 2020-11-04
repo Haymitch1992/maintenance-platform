@@ -61,7 +61,7 @@
 
                             <a-table :columns="columns" :data-source="dataList" bordered>
                                 <template slot="operation" slot-scope="text, record">
-                                    <a @click="createView(record.params)"  class="btn-margin-right">查看参数</a>
+                                    <a @click="createView(record.params,record.paramType)"  class="btn-margin-right">查看参数</a>
                                     <a @click="createViewLog(record)" class="btn-margin-right" >查看日志</a>
                                     <a :disabled="record.isExecute===1" @click="editRask(record)" class="btn-margin-right">修改</a>
                                     <a :disabled="record.isExecute===1" @click="raskRun(record.id)">执行</a>
@@ -107,7 +107,7 @@
             </a-layout>
 
         </a-layout>
-        <viewOptions :showModal="viewModel"
+        <viewOptions :showModal="viewModel" :paramType="paramType"
                       @closeView="closeView" :paramsObj="viewObj"></viewOptions>
         <addList :showModal="raskModel"
                  :paramData="paramData"
@@ -147,6 +147,7 @@
                 current: 0,
                 viewObj:[],
                 logDate:'',
+                paramType:'',
                 paramCloumns:[
                     {
                         title: '任务号Id',
@@ -240,8 +241,9 @@
                 this.viewLog = true
                 this.logDate = obj.log
             },
-            createView(e){
+            createView(e,type){
                 this.viewModel = true
+                this.paramType =type
                 let obj = JSON.parse(e)
                 this.viewObj = []
                 let num = 0

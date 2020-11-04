@@ -6,6 +6,7 @@
             @ok="handleOk"
             @cancel="handleCancel"
     >
+        <p>参数模板 : {{paramType}}</p>
         <a-table :columns="cloumns" :data-source="paramsObj" bordered>
 
         </a-table>
@@ -18,7 +19,8 @@
         name: "viewOptions",
         props:{
             showModal:Boolean,
-            paramsObj:Array
+            paramsObj:Array,
+            paramType:String
         },
         data(){
             return{

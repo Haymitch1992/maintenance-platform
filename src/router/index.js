@@ -8,7 +8,7 @@ const routes = [
     path: '/',
     name: 'list',
     component: () => import(/* webpackChunkName: "about" */ '../views/maintenance-list.vue')
-  },
+  }
 ]
 
 const router = new VueRouter({
