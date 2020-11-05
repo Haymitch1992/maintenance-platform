@@ -260,7 +260,12 @@
             openUrl(obj){
                 this.current =3
                 this.urlDate = obj
-                this.urltoken = obj.token.split(',')
+                if(obj.token){
+                    this.urltoken = obj.token.split(',')
+                }else{
+                    this.urltoken = []
+                }
+
             },
             handleChange(){
                 this.raskList()
