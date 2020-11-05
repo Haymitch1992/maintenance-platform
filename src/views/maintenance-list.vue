@@ -106,8 +106,8 @@
                             </a-table>
                         </div>
                         <div v-show="current===3">
-                            <a-alert :message="urlDate.token" type="success" />
-                            <a-button type="primary" @click="openUrlPage" style="margin-top: 20px;">
+                            <a-alert :message="item" type="success" v-for="(item,index) in urltoken" :key="index" style="margin-bottom: 20px;"/>
+                            <a-button type="primary" @click="openUrlPage" >
                                 打开链接
                             </a-button>
                         </div>
@@ -232,6 +232,7 @@
                 currentOptionType:'-',
                 urlList:[],
                 urlDate:{},
+                urltoken:[],
                 raskInfo:{
 
                 }
@@ -259,6 +260,7 @@
             openUrl(obj){
                 this.current =3
                 this.urlDate = obj
+                this.urltoken = obj.token.split(',')
             },
             handleChange(){
                 this.raskList()
