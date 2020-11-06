@@ -6,7 +6,8 @@
             @ok="handleOk"
             @cancel="handleCancel"
     >
-        <p>参数模板 : {{paramType}}</p>
+        <p>参数模板 : {{paramType}} <span style="margin-left: 24px;" v-if="paramType==='中间件'">类型 : {{paramMidType}}</span></p>
+
         <a-table :columns="cloumns" :data-source="paramsObj" bordered>
 
         </a-table>
@@ -20,7 +21,8 @@
         props:{
             showModal:Boolean,
             paramsObj:Array,
-            paramType:String
+            paramType:String,
+            paramMidType:String
         },
         data(){
             return{

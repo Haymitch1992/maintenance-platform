@@ -8,22 +8,23 @@
             @cancel="handleCancel"
     >
         <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" >
-            <a-form-item label="参数类型">
-                <a-select v-decorator="['type', { rules: [{ required: true, message: '请输入参数名!' },{ validator:this.checkContent.bind(this) }] }]">
-                    <a-select-option value="中间件">
-                        中间件
+            <a-form-item label="参数模板">
+                <a-select @change="handleSelectChange" v-decorator="['type', { rules: [{ required: true, message: '请选择参数模板!' }] }]">
+                    <a-select-option :key="item" :value="item" v-for="item in $store.state.paramlist">
+                        {{item}}
                     </a-select-option>
-                    <a-select-option value="前端">
-                        前端
-                    </a-select-option>
-                    <a-select-option value="自研服务">
-                        自研服务
+                </a-select>
+            </a-form-item>
+            <a-form-item label="类型" v-if="showType">
+                <a-select v-decorator="['midType', { rules: [{ required: true, message: '请输入类型!' }] }]">
+                    <a-select-option :key="item" :value="item" v-for="item in $store.state.typeList">
+                        {{item}}
                     </a-select-option>
                 </a-select>
             </a-form-item>
             <a-form-item label="参数名">
                 <a-input
-                        v-decorator="['note', { rules: [{ required: true, message: '请输入参数名!' },{ validator:this.checkContent.bind(this) }] }]"
+                        v-decorator="['note', { rules: [{ required: true, message: '请输入参数名!' },{ validator:checkContent }] }]"
                 />
             </a-form-item>
         </a-form>
@@ -42,21 +43,34 @@
             return{
                 confirmLoading: false,
                 formLayout: 'horizontal',
+                showType:false,
                 form: this.$form.createForm(this, { name: 'coordinated' }),
             }
         },
         methods: {
+            handleSelectChange(value) {
+                if(value==='中间件'){
+                    this.showType = true
+                }else{
+                    this.showType = false
+                }
+            },
             checkContent(rule,value,callback){
                 this.$axios.get(POST_PARAM_CHECK,{
                     params: {
                         name:value,
+                        type:this.form.getFieldValue('type'),
+                        midType:this.form.getFieldValue('midType')?this.form.getFieldValue('midType'):''
                     }
                 }).then((res)=>{
                     if(res.data.resultCode!==200){
                         callback(new Error(res.data.message))
                     }else{
+
                         callback()
                     }
+                }).catch(()=>{
+                    callback(new Error('校验失败'))
                 })
             },
             handleOk() {
@@ -67,7 +81,8 @@
                         this.confirmLoading = true
                         this.$axios.post(POST_PARAM_SAVE,{
                             name:values.note,
-                            type:values.type
+                            type:values.type,
+                            midType:values.midType
                         }).then((res)=>{
                             this.confirmLoading = false
                             this.$emit('closeOptions')

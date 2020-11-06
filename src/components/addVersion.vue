@@ -9,7 +9,7 @@
         <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" >
             <a-form-item label="版本号">
                 <a-input
-                        v-decorator="['note', { rules: [{ required: true, message: '请输入版本号!' },{ validator:this.checkContent.bind(this) }]}]"
+                        v-decorator="['note', { rules: [{ required: true, message: '请输入版本号!' },{ validator:checkContent}]}]"
                 />
             </a-form-item>
         </a-form>
@@ -43,6 +43,8 @@
                     }else{
                         callback()
                     }
+                }).catch(()=>{
+                    callback(new Error('校验失败'))
                 })
             },
             handleOk() {

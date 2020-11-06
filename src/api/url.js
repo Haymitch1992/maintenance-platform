@@ -25,4 +25,7 @@ export const POST_VERSIONS_SAVE = '/api/version/save'
 
 // 接口路径
 export const GET_LINK_URL = '/api/url/list'
+// 获取参数列表
+export const GET_CONFIG_LIST = '/api/config/list'
+
 

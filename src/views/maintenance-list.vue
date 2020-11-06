@@ -65,7 +65,7 @@
 
                             <a-table :columns="columns" :data-source="dataList" bordered>
                                 <template slot="operation" slot-scope="text, record">
-                                    <a @click="createView(record.params,record.paramType)"  class="btn-margin-right">查看参数</a>
+                                    <a @click="createView(record.params,record.paramType,record.paramMidType)"  class="btn-margin-right">查看参数</a>
                                     <a @click="createViewLog(record)" class="btn-margin-right" >查看日志</a>
                                     <a :disabled="record.isExecute===1" @click="editRask(record)" class="btn-margin-right">修改</a>
                                     <a :disabled="record.isExecute===1" @click="raskRun(record.id)">执行</a>
@@ -120,7 +120,7 @@
             </a-layout>
 
         </a-layout>
-        <viewOptions :showModal="viewModel" :paramType="paramType"
+        <viewOptions :showModal="viewModel" :paramType="paramType" :paramMidType="paramMidType"
                       @closeView="closeView" :paramsObj="viewObj"></viewOptions>
         <addList :showModal="raskModel"
                  :paramData="paramData"
@@ -140,7 +140,14 @@
     import viewOptions from "../components/viewOptions";
     import viewLog from "../components/viewLog";
 
-    import {GET_LINK_URL, POST_PARAM_LIST, POST_TASK_LIST, POST_TASK_RUN, POST_VERSIONS_LIST} from "../api/url";
+    import {
+        GET_CONFIG_LIST,
+        GET_LINK_URL,
+        POST_PARAM_LIST,
+        POST_TASK_LIST,
+        POST_TASK_RUN,
+        POST_VERSIONS_LIST
+    } from "../api/url";
     export default {
         components:{
             addList,
@@ -159,6 +166,7 @@
                 viewLog:false,
                 current: 0,
                 viewObj:[],
+                paramMidType:'',
                 logDate:'',
                 paramType:'',
                 paramCloumns:[
@@ -173,6 +181,10 @@
                     {
                         title: '参数模板',
                         dataIndex: 'type',
+                    },
+                    {
+                        title: '类型',
+                        dataIndex: 'midType',
                     },
                 ],
                 versionCloumns:[
@@ -204,7 +216,7 @@
                     },
 
                     {
-                        title: '执行结果',
+                        title: '执行进度',
                         dataIndex: 'result',
                         width: 250
                     },
@@ -243,8 +255,32 @@
             this.paramList()
             this.versionList()
             this.getUrl()
+            this.add()
         },
         methods:{
+            add(){
+                // 获取参数列表
+                this.$axios.get(GET_CONFIG_LIST)
+                    .then((res)=>{
+                        //
+                        let arr =  res.data.data
+                        let parmaList = []
+                        let typeList = []
+                        arr.forEach((item)=>{
+                            if(parmaList.indexOf(item.type)===-1){
+                                parmaList.push(item.type)
+                            }
+                            if(typeList.indexOf(item.midType)===-1 && item.midType){
+                                typeList.push(item.midType)
+                            }
+                        })
+                        this.$store.commit('saveParamList',{arr1:parmaList,arr2:typeList})
+                    })
+                    .catch((result)=>{
+                        console.log(result)
+                    })
+                //
+            },
             openUrlPage(){
                 window.open(this.urlDate.url)
             },
@@ -280,9 +316,10 @@
                 this.viewLog = true
                 this.logDate = obj.log
             },
-            createView(e,type){
+            createView(e,type,str){
                 this.viewModel = true
                 this.paramType =type
+                this.paramMidType = str
                 let obj = JSON.parse(e)
                 this.viewObj = []
                 let num = 0

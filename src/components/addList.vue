@@ -51,16 +51,17 @@
                                        },
                                     ]"
                                 placeholder="请选择版本"
-                                @change="changeParamType"
+                                @change="paramModel"
                         >
-                            <a-select-option value="中间件" >
-                                中间件
+                            <a-select-option :key="item" :value="item" v-for="item in $store.state.paramlist">
+                                {{item}}
                             </a-select-option>
-                            <a-select-option value="前端">
-                                前端
-                            </a-select-option>
-                            <a-select-option value="自研服务" >
-                                自研服务
+                        </a-select>
+                    </a-form-item>
+                    <a-form-item label="类型" v-if="showType">
+                        <a-select @change="changeMidType" v-decorator="['midType', { rules: [{ required: true, message: '请输入类型!' }],initialValue:raskInfo.paramMidType }]">
+                            <a-select-option :key="item" :value="item" v-for="item in $store.state.typeList">
+                                {{item}}
                             </a-select-option>
                         </a-select>
                     </a-form-item>
@@ -145,6 +146,7 @@
                 ModalText: 'Content of the modal',
                 checkNum : 0,
                 confirmLoading: false,
+                showType:false,
                 formLayout: 'horizontal',
                 form: this.$form.createForm(this, { name: 'coordinated' }),
                 paramData: [],
@@ -182,16 +184,72 @@
             showModal:function(val, oldVal){
                 console.log(val, oldVal)
                 this.dynamicValidateForm.domains = this.raskInfo.arr3
+                if(this.raskInfo.paramType==='中间件'){
+                    this.showType = true
+                }else{
+                    this.showType = false
+                }
             }
         },
         methods: {
-            changeParamType(value){
+            changeMidType(value){
                 this.paramData = []
                 this.raskInfo.arr1 = []
                 this.raskInfo.arr2 = []
                 this.$axios.get(POST_PARAM_LIST, {
                     params:{
-                        type:value
+                        type:this.form.getFieldValue('paramType'),
+                    }
+                })
+                    .then((res)=>{
+                        console.log(res)
+                        // 过滤处理
+                        let arr = []
+                        res.data.data.forEach((item)=>{
+                            if(item.midType === value){
+                                arr.push(item)
+                            }
+                        })
+                        // 如果没有值 注入一个空对象
+                        if(arr.length===0){
+                            arr.push({name:'',type:''})
+                        }
+                        this.paramData = arr
+                        let paramDataLength = arr.length
+                        this.dynamicValidateForm.domains = [
+
+                        ]
+                        for(let i = 0;i<paramDataLength;i++){
+                            this.addDomain()
+                            this.raskInfo.arr1.push(this.paramData[i].name)
+                        }
+                    })
+                    .catch((result)=>{
+                        console.log(result)
+                    })
+            },
+            paramModel(value){
+                // 如果选择的是 中间件
+                if(value==='中间件'){
+                    this.showType = true
+                    this.raskInfo.arr1 = []
+                    this.raskInfo.arr2 = []
+                    this.dynamicValidateForm.domains=[{   value: '',
+                        key: '',
+                    }]
+                }else{
+                    this.showType = false
+                    this.changeParamType(value)
+                }
+            },
+            changeParamType(value){
+
+                this.paramData = []
+                this.raskInfo.arr1 = []
+                this.raskInfo.arr2 = []
+                this.$axios.get(POST_PARAM_LIST, {
+                    params:{
+                        type:value,
                     }
                 })
                     .then((res)=>{
@@ -255,7 +313,8 @@
                                         taskName:values.taskName,
                                         params:JSON.stringify(obj),
                                         paramType:values.paramType,
-                                        id: this.raskInfo.id
+                                        id: this.raskInfo.id,
+                                        paramMidType:values.midType,
                                     }
 
                                 }).then((res)=>{

@@ -6,7 +6,7 @@
             @ok="handleOk"
             @cancel="handleCancel"
     >
-    <div>{{paramsObj}}</div>
+    <div v-html="paramsObj"></div>
     </a-modal>
 </template>
 
