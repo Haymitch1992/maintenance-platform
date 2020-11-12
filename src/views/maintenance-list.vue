@@ -16,7 +16,7 @@
                         </a-menu-item>
                         <a-menu-item key="2" @click="current=1">
                             <a-icon type="pie-chart" />
-                            参数模板
+                            K8S参数模板
                         </a-menu-item>
                         <a-menu-item key="3" @click="current=2">
                             <a-icon type="calendar" />
@@ -36,14 +36,14 @@
                                 <p>南宁地铁4号线</p>
                             </li>
                             <li>
-                                <p>技术支持</p>
-                                <p>交控科技</p>
-                            </li>
-                            <li>
                                 <p>当前任务总数</p>
                                 <p>
                                     {{dataList.length}}
                                 </p>
+                            </li>
+                            <li>
+                                <p>技术支持</p>
+                                <p>交控科技</p>
                             </li>
                         </ul>
                     </div>
@@ -352,6 +352,7 @@
                 obj.arr1 = arr1
                 obj.arr2 = arr2
                 obj.arr3 = arr3
+                obj.arr4 = []
                 this.raskInfo = obj
                 this.raskModel = true
             },
@@ -367,6 +368,7 @@
                         value: '',
                         key: '',
                     }],
+                    arr4: []
                 }
                 this.raskModel = true
             },

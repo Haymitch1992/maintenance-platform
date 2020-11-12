@@ -103,7 +103,7 @@
                         >
 
                             <a-input style="width: 94px;margin-right: 10px;"
-                                     placeholder="参数值"
+                                     :placeholder="raskInfo.arr4[index]?raskInfo.arr4[index]:'参数名'"
                                      v-decorator="[`value[${index}]`, { rules: [{ required: true, message: '请输入参数值！' }],
                                       initialValue:raskInfo.arr2[index]
                                       }]"
@@ -196,6 +196,7 @@
                 this.paramData = []
                 this.raskInfo.arr1 = []
                 this.raskInfo.arr2 = []
+                this.raskInfo.arr4 = []
                 this.$axios.get(POST_PARAM_LIST, {
                     params:{
                         type:this.form.getFieldValue('paramType'),
@@ -222,6 +223,7 @@
                         for(let i = 0;i<paramDataLength;i++){
                             this.addDomain()
                             this.raskInfo.arr1.push(this.paramData[i].name)
+                            this.raskInfo.arr4.push(this.paramData[i].description)
                         }
                     })
                     .catch((result)=>{
@@ -234,6 +236,7 @@
                     this.showType = true
                     this.raskInfo.arr1 = []
                     this.raskInfo.arr2 = []
+                    this.raskInfo.arr4 = []
                     this.dynamicValidateForm.domains=[{   value: '',
                         key: '',
                     }]
@@ -247,6 +250,7 @@
                 this.paramData = []
                 this.raskInfo.arr1 = []
                 this.raskInfo.arr2 = []
+                this.raskInfo.arr4 = []
                 this.$axios.get(POST_PARAM_LIST, {
                     params:{
                         type:value,
@@ -262,6 +266,7 @@
                         for(let i = 0;i<paramDataLength;i++){
                             this.addDomain()
                             this.raskInfo.arr1.push(this.paramData[i].name)
+                            this.raskInfo.arr4.push(this.paramData[i].description)
                         }
                     })
                     .catch((result)=>{
