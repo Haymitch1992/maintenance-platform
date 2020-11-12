@@ -171,7 +171,7 @@
                 paramType:'',
                 paramCloumns:[
                     {
-                        title: '任务号Id',
+                        title: '参数Id',
                         dataIndex: 'id',
                     },
                     {
@@ -193,7 +193,7 @@
                 ],
                 versionCloumns:[
                     {
-                        title: '任务号Id',
+                        title: '版本号Id',
                         dataIndex: 'id',
                     },
                     {
