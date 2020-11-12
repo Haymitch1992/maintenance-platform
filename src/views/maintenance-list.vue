@@ -186,6 +186,10 @@
                         title: '类型',
                         dataIndex: 'midType',
                     },
+                    {
+                        title: '注释说明',
+                        dataIndex: 'description',
+                    },
                 ],
                 versionCloumns:[
                     {

@@ -91,19 +91,19 @@
                                       v-decorator="[`key[${index}]`, { rules: [{ required: true, message: '请选择参数名！' }],
                                        initialValue:raskInfo.arr1[index]
                                        }]"
-                                      style="width: 100px;margin-right: 10px;">
+                                      style="width: 138px;margin-right: 10px;">
                                 <a-select-option :value="item.name" :key="item.id" v-for="item in paramData">
                                     {{item.name}}
                                 </a-select-option>
                             </a-select>
                         </a-form-item>
                         <a-form-item
-                                style="position: absolute;top: 0px;left:210px;width: 250px;"
+                                style="position: absolute;top: 0px;left:242px;width: 250px;"
 
                         >
 
-                            <a-input style="width: 100px;margin-right: 10px;"
-                                     placeholder="请输入参数值"
+                            <a-input style="width: 94px;margin-right: 10px;"
+                                     placeholder="参数值"
                                      v-decorator="[`value[${index}]`, { rules: [{ required: true, message: '请输入参数值！' }],
                                       initialValue:raskInfo.arr2[index]
                                       }]"

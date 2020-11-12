@@ -27,6 +27,11 @@
                         v-decorator="['note', { rules: [{ required: true, message: '请输入参数名!' },{ validator:checkContent }] }]"
                 />
             </a-form-item>
+            <a-form-item label="注释说明">
+                <a-input
+                        v-decorator="['description', { rules: [{ required: true, message: '请输入参数名!' },{ validator:checkContent }] }]"
+                />
+            </a-form-item>
         </a-form>
     </a-modal>
 </template>
@@ -82,7 +87,8 @@
                         this.$axios.post(POST_PARAM_SAVE,{
                             name:values.note,
                             type:values.type,
-                            midType:values.midType
+                            midType:values.midType,
+                            description:values.description
                         }).then((res)=>{
                             this.confirmLoading = false
                             this.$emit('closeOptions')
