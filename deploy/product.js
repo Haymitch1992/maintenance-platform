@@ -49,8 +49,8 @@ const SERVER_LIST = [
         host: '112.126.65.241', // ip
         port: 22, // 端口
         username: 'root', // 登录服务器的账号
-        password: 'JKroot123', // 登录服务器的账号
-        path: '/usr/local/cmdtaskweb/dist'// 发布至静态服务器的项目路径
+        password: 'jkroot@123', // 登录服务器的账号
+        path: '/home/webapp/cmdtask/'// 发布至静态服务器的项目路径
     }
 ];
 

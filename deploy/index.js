@@ -21,7 +21,7 @@ conn
         ) {
             if (err) throw err;
             stream
-                .on('close', function(code, signal) {
+                .on('close', function() {
                     // 在执行shell命令后，把开始上传部署项目代码放到这里面
                     spinner.start();
                     scpClient.scp(
